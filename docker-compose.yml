@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: tikshop-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - tikshop-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tikshop-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - tikshop-network
+
+networks:
+  tikshop-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
